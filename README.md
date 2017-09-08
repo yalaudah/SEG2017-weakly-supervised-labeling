@@ -7,7 +7,7 @@ This code is used to generate the results in the following paper:
 `Y. Alaudah and G. AlRegib, “A weakly-supervised approach to seismic structure labeling,” 87th Annual SEG Meeting, Houston, Texas, 2017.`
 
 BibTeX:
-` bibtex
+` 
 @inbook{doi:10.1190/segam2017-17793533.1,
 author = {Yazeed Alaudah and Ghassan AlRegib},
 title = {A weakly supervised approach to seismic structure labeling},
