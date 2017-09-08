@@ -11,14 +11,23 @@ BibTeX:
 ` 
 @inbook{doi:10.1190/segam2017-17793533.1,
 author = {Yazeed Alaudah and Ghassan AlRegib},
+
 title = {A weakly supervised approach to seismic structure labeling},
+
 booktitle = {SEG Technical Program Expanded Abstracts 2017},
+
 chapter = {},
+
 pages = {2158-2163},
+
 year = {2017},
+
 doi = {10.1190/segam2017-17793533.1},
+
 URL = {http://library.seg.org/doi/abs/10.1190/segam2017-17793533.1},
+
 eprint = {http://library.seg.org/doi/pdf/10.1190/segam2017-17793533.1}
+
 }
 `
 
