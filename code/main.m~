@@ -11,6 +11,8 @@ k = 100; % k in kmeans (i.e. number of features per class)
 N_l = 4; % number of classes
 % Saving the results ----------------------------------------------------
 save_skip = 1; % if you want to save only a subset of the images, use 2 or 5 or any other number
+
+save_skip = 1; % if you want to save only a subset of the images, use 2 or 5 or any other number
 normalizeYfinal = 1; % if you'd like to normalize Yfinal to get probability values
 
 %% -------------------------------------------------------------------- %
@@ -18,6 +20,9 @@ normalizeYfinal = 1; % if you'd like to normalize Yfinal to get probability valu
 % --------------------------------------------------------------------- %
 
 load('../data/images.mat'); % 2000 images of size 99x99
+
+% skip images if you'd like (save memory)
+images = images(1:data_skip:end, :,:);
 
 numImages = size(images, 1);
 % Assuming classes are balanced (each class has the same number of images) 
@@ -57,7 +62,9 @@ H_init = rand(N_l*k,numImages);
 sW = 0.4; % Values from 0.4-0.85 work best
 
 % create B matrix:
-B = eye(N_l*k,N_l*k);             % Identity matrix 
+% B = eye(N_l*k,N_l*k);             % Identity matrix 
+%  B = kron(eye(N_l,N_l),ones(k,k));% block diagonal 
+B = rand(N_l*k,N_l*k);              % random matrix
 
 % run ONMF:
 save_memory = 1;
