@@ -22,8 +22,6 @@ eprint = {http://library.seg.org/doi/pdf/10.1190/segam2017-17793533.1}
 }
 ```
 
-Run `main.m` to load the data and generate the results.  You will need to download the nmfpack code from:
-https://www.cs.helsinki.fi/u/phoyer/code/nmfpack.tar.gz
-
+Run `main.m` to load the data and generate the results.  
 
 If you use this code please cite the paper.

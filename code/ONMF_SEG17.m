@@ -17,8 +17,10 @@ function [W, H] = ONMF_SEG17(X,W_,H_,B,sW,N_l,save_memory)
 % --------------------------------------------------------------------- %
 %                              Main Parameters                          %
 % --------------------------------------------------------------------- %
+W_ = sparsify_columns(W_, sW);
+
 maxIter = 200;      % Default: 200
-eps     =  1e-3;    % to avoid division by zero 
+eps     =  1e-5;    % to avoid division by zero 
 lambda1 = 0.1;      % Default: 0.1 -- constraint on F-norm of W
 lambda2 = 0.5;      % Default: 0.5 -- constraint on F-norm of H
 gamma1  = 5;        % Default: 5 (as long as you're normalizing HW) -- Orthogonality constraint on H 
@@ -32,7 +34,7 @@ normalizeHW = 1;    % Default: 1 - Normalizes the values of H and W every iterat
 [~, K] = size(W_);      % K: total # of features/atoms
 k = K/N_l;              % k: number of features/atoms per class
 
-W_ = sparsify_columns(W_, sW);
+
 
 % Since the sparsity constraint is applied only once, we should disable the
 % sparsity constraint: 
@@ -88,7 +90,7 @@ for iter = 2:maxIter
         begobj = norm(X-W_*H_,'fro')^2; 
         idx = 0;
         % Make sure we decrease the objective!
-        while 1,
+        while 1
             idx = idx+1;
             % Take step in direction of negative gradient, and project
             W_new = W_ - stepsizeW*dW;

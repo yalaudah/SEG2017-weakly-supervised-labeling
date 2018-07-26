@@ -7,7 +7,7 @@ clc; close all; clear;
 % --------------------------------------------------------------------- %
 
 % Data Preperation ------------------------------------------------------
-k = 100; % k in kmeans (i.e. number of features per class)
+k = 200; % k in kmeans (i.e. number of features per class)
 N_l = 4; % number of classes
 % Saving the results ----------------------------------------------------
 save_skip = 1; % if you want to save only a subset of the images, use 2 or 5 or any other number
@@ -72,43 +72,12 @@ Q = normalizeColumns(Q);
 I_Nl = ones(1,N_l);
 Y  = zeros(numImages,99*99,N_l); 
 
-av_ch = zeros(N_l*k,1); hi_ch = zeros(N_l*k,1);
-av_ot = zeros(N_l*k,1); hi_ot = zeros(N_l*k,1);
-av_fa = zeros(N_l*k,1); hi_fa = zeros(N_l*k,1);
-av_sa = zeros(N_l*k,1); hi_sa = zeros(N_l*k,1);
+tau = 1e-3;
 
 for img = 1:numImages
     clc;
     disp(['Image: ', num2str(img), '/' num2str(numImages)]);
     Hi = squeeze(H_t(:,img));
-    
-    switch y(img)
-        case 1
-            hi_ch = hi_ch + Hi; % not sorted
-            av_ch = av_ch + N_l/numImages * sort(Hi,1,'descend'); %sorted
-        case 2
-            hi_ot = hi_ot + Hi; % not sorted
-            av_ot = av_ot + N_l/numImages * sort(Hi,1,'descend');
-        case 3
-            hi_fa = hi_fa + Hi; % not sorted
-            av_fa = av_fa + N_l/numImages * sort(Hi,1,'descend');
-        case 4
-            hi_sa = hi_sa + Hi; % not sorted
-            av_sa = av_sa + N_l/numImages * sort(Hi,1,'descend');
-    end
-end
-
-av = (av_ch+av_ot+av_fa+av_sa)/N_l;
-
-% to find the cut-off point:
-[res_x, idx_of_result] = knee_pt(av);
-H_thresh = av(idx_of_result);
-
-for img = 1:numImages
-    clc;
-    disp(['Image: ', num2str(img), '/' num2str(numImages)]);
-    Hi = squeeze(H_t(:,img));
-    Hi(Hi<H_thresh) = 0;
     Y(img,:,:) = W_t*(Q.*(Hi*I_Nl));
 end
 
@@ -119,10 +88,12 @@ end
 % create directory to save results:
 t = datetime('now');
 t.Format = 'ddMMMyyyy_hhmm';
-dir_name = strcat('../results/res_',datestr(t,'mmddHHMM'));
+dir_name = strcat('../results_',datestr(t,'mmddHHMM'));
 mkdir(dir_name);
 cd(dir_name);
 
+% Smoothing results?
+gaussian_filtering = 1; sigma = 1; 
 
 idx = 0;
 for i = 1:save_skip:numImages
@@ -132,10 +103,10 @@ for i = 1:save_skip:numImages
     Y_idx = squeeze(Y(i,:,:));
     
     if gaussian_filtering == 1
-        for k = 1:N_l
-            temp = reshape(squeeze(Y_idx(:,k)),[99,99]);
+        for class = 1:N_l
+            temp = reshape(squeeze(Y_idx(:,class)),[99,99]);
             temp = imgaussfilt(temp,sigma);
-            Y_idx(:,k) = reshape(temp,[99*99,1]);
+            Y_idx(:,class) = reshape(temp,[99*99,1]);
         end
     end
     
@@ -143,7 +114,7 @@ for i = 1:save_skip:numImages
     conf = vals./(sum(Y_idx,2)+1e-6);
     classifiedImage =  reshape(classifiedImage,99,99);
     conf =  reshape(conf,99,99);
-    classifiedImage(conf<conf_thresh) = 0;
+    classifiedImage(conf<tau) = 0;
     
     coloredImage =  uint8(zeros([size(img),3]));
     for ii = 1:size(img,1)
@@ -153,7 +124,7 @@ for i = 1:save_skip:numImages
             elseif classifiedImage(ii,jj) == 1     % Chaotic:
                 coloredImage(ii,jj,:) = [0,0,255]; % blue
             elseif classifiedImage(ii,jj) == 2  % Other:
-               coloredImage(ii,jj,:) = [183,183,183]; % default background
+                coloredImage(ii,jj,:) = [100,255,255]; % light blue
             elseif classifiedImage(ii,jj) == 3 % Fault:
                 coloredImage(ii,jj,:) = [0,255,0]; % Green
             elseif classifiedImage(ii,jj) == 4 % Salt:
