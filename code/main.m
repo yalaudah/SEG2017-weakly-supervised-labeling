@@ -92,7 +92,7 @@ mkdir(dir_name);
 % Smoothing results?
 gaussian_filtering = 1; sigma = 1; 
 
-tau = 1e-3;
+tau = 15e-4;
 
 idx = 0;
 for i = 1:save_skip:numImages

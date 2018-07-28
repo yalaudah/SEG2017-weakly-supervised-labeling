@@ -24,7 +24,7 @@ eps     =  1e-5;    % to avoid division by zero
 lambda1 = 0.1;      % Default: 0.1 -- constraint on F-norm of W
 lambda2 = 0.5;      % Default: 0.5 -- constraint on F-norm of H
 gamma1  = 5;        % Default: 5 (as long as you're normalizing HW) -- Orthogonality constraint on H 
-normalizeHW = 1;    % Default: 1 - Normalizes the values of H and W every iteration
+normalizeHW = 0;    % Default: 1 - Normalizes the values of H and W every iteration
 
 % Note: Code converges faster *without* normalization. Takes longer to
 % converge when you normalize, but usually leads to better results. 
