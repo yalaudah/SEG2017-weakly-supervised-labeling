@@ -72,8 +72,6 @@ Q = normalizeColumns(Q);
 I_Nl = ones(1,N_l);
 Y  = zeros(numImages,99*99,N_l); 
 
-tau = 1e-3;
-
 for img = 1:numImages
     clc;
     disp(['Image: ', num2str(img), '/' num2str(numImages)]);
@@ -90,10 +88,11 @@ t = datetime('now');
 t.Format = 'ddMMMyyyy_hhmm';
 dir_name = strcat('../results_',datestr(t,'mmddHHMM'));
 mkdir(dir_name);
-cd(dir_name);
 
 % Smoothing results?
 gaussian_filtering = 1; sigma = 1; 
+
+tau = 1e-3;
 
 idx = 0;
 for i = 1:save_skip:numImages
@@ -111,7 +110,7 @@ for i = 1:save_skip:numImages
     end
     
     [vals, classifiedImage] = max(Y_idx,[],2);
-    conf = vals./(sum(Y_idx,2)+1e-6);
+    conf = vals; %./(sum(Y_idx,2)+1e-6);
     classifiedImage =  reshape(classifiedImage,99,99);
     conf =  reshape(conf,99,99);
     classifiedImage(conf<tau) = 0;
@@ -137,7 +136,7 @@ for i = 1:save_skip:numImages
     hh = figure;
     imshow(img,[]);
     set(gca,'position',[0 0 1 1],'units','normalized'); % remove white border to save image only
-    name = strcat('img_',num2str(i));
+    name = strcat(dir_name,'img_',num2str(i));
     saveas(hh, strcat(name,'.png'));
 
     hold on;
