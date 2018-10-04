@@ -79,6 +79,14 @@ for img = 1:numImages
     Y(img,:,:) = W_t*(Q.*(Hi*I_Nl));
 end
 
+
+% show sample images
+conf_thresh = 0; % threshold any values below this value to zero
+gaussian_filtering = 1; % set to 1 to use gaussian filtering of the results
+sigma = 0.5; % sigma value for the gaussian filtering
+
+show_images(X,Y,N_l,conf_thresh, gaussian_filtering, sigma); 
+
 %% -------------------------------------------------------------------- %
 %                               Save Results                            %
 % --------------------------------------------------------------------- %
@@ -89,8 +97,6 @@ t.Format = 'ddMMMyyyy_hhmm';
 dir_name = strcat('../results_',datestr(t,'mmddHHMM'));
 mkdir(dir_name);
 
-% Smoothing results?
-gaussian_filtering = 1; sigma = 1; 
 
 tau = 15e-4;
 
