@@ -19,12 +19,12 @@ function [W, H] = ONMF_SEG17(X,W_,H_,B,sW,N_l,save_memory)
 % --------------------------------------------------------------------- %
 W_ = sparsify_columns(W_, sW);
 
-maxIter = 200;      % Default: 200
+maxIter = 300;      % Default: 300
 eps     =  1e-5;    % to avoid division by zero 
 lambda1 = 0.1;      % Default: 0.1 -- constraint on F-norm of W
 lambda2 = 0.5;      % Default: 0.5 -- constraint on F-norm of H
 gamma1  = 5;        % Default: 5 (as long as you're normalizing HW) -- Orthogonality constraint on H 
-normalizeHW = 0;    % Default: 1 - Normalizes the values of H and W every iteration
+normalizeHW = 1;    % Default: 1 - Normalizes the values of H and W every iteration
 
 % Note: Code converges faster *without* normalization. Takes longer to
 % converge when you normalize, but usually leads to better results. 
@@ -33,8 +33,6 @@ normalizeHW = 0;    % Default: 1 - Normalizes the values of H and W every iterat
 [N_p, N_s] = size(X);   % N_p: number of pixels, N_s: number of images (samples)
 [~, K] = size(W_);      % K: total # of features/atoms
 k = K/N_l;              % k: number of features/atoms per class
-
-
 
 % Since the sparsity constraint is applied only once, we should disable the
 % sparsity constraint: 
@@ -134,10 +132,11 @@ for iter = 2:maxIter
     H_t = H_.*((W_t'*X + gamma1*(B+B')*H_ + eps)./(W_t'*W_t*H_+ gamma1*(H_*H_'*H_) + lambda2*H_ + eps));
     
     if normalizeHW == 1
-        % Renormalize so rows of H have constant energy
-        norms = sqrt(sum(H_t'.^2));
-        H_t = H_t./(norms'*ones(1,size(H_t,2)));
-        W_t = W_t.*(ones(size(W_t,1),1)*norms);
+        % Renormalize so columns of W and rows of H have constant energy
+        norms_row_H = sqrt(sum(transpose(H_t.^2)))';
+        H_t = H_t ./ (norms_row_H*ones(1,size(H,2)));
+        norms_col_W = sqrt(sum(W_t.^2));
+        W_t = W_t ./ (ones(size(W,1),1)*norms_col_W);
     end
         
     % save result:
