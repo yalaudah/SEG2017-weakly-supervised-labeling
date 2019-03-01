@@ -7,7 +7,7 @@ clc; close all; clear;
 % --------------------------------------------------------------------- %
 
 % Data Preperation ------------------------------------------------------
-k = 200; % k in kmeans (i.e. number of features per class)
+k = 250; % k in kmeans (i.e. number of features per class)
 N_l = 4; % number of classes
 % Saving the results ----------------------------------------------------
 save_skip = 1; % if you want to save only a subset of the images, use 2 or 5 or any other number
@@ -116,9 +116,12 @@ for i = 1:save_skip:numImages
     end
     
     [vals, classifiedImage] = max(Y_idx,[],2);
-    conf = vals; %./(sum(Y_idx,2)+1e-6);
+    conf = vals./(sum(Y_idx,2)+1e-6);
     classifiedImage =  reshape(classifiedImage,99,99);
     conf =  reshape(conf,99,99);
+    % comment out this line to remove the median filtering of the results:
+    classifiedImage = medfilt2(classifiedImage,[3,3],'symmetric');
+
     classifiedImage(conf<tau) = 0;
     
     coloredImage =  uint8(zeros([size(img),3]));
@@ -142,7 +145,7 @@ for i = 1:save_skip:numImages
     hh = figure;
     imshow(img,[]);
     set(gca,'position',[0 0 1 1],'units','normalized'); % remove white border to save image only
-    name = strcat(dir_name,'img_',num2str(i));
+    name = strcat('img_',num2str(i));
     saveas(hh, strcat(name,'.png'));
 
     hold on;
@@ -152,5 +155,12 @@ for i = 1:save_skip:numImages
     
     % save figure as an image with appropriate title:
     saveas(hh, strcat(name,'_labels.png'));
+    
+    % save image, conf, and labels: 
+    save(name,'img','-v7');
+    save(strcat('conf_',name,'.mat'),'conf','-v7');
+    save(strcat('lbls_',name,'.mat'),'classifiedImage','-v7');
+
+        
     
 end

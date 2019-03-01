@@ -19,7 +19,7 @@ function [W, H] = ONMF_SEG17(X,W_,H_,B,sW,N_l,save_memory)
 % --------------------------------------------------------------------- %
 W_ = sparsify_columns(W_, sW);
 
-maxIter = 300;      % Default: 300
+maxIter = 400;      % Default: 300
 eps     =  1e-5;    % to avoid division by zero 
 lambda1 = 0.1;      % Default: 0.1 -- constraint on F-norm of W
 lambda2 = 0.5;      % Default: 0.5 -- constraint on F-norm of H
